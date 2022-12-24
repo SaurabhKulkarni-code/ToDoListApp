@@ -1,25 +1,64 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "../src/App.css";
+import ToDoForm from "./ToDoForm";
+import TodoItem from "./TodoItem";
 
-function App() {
+const App = () => {
+  const [todo, setTodo] = useState([]);
+
+  function addTodo(text) {
+    let id = 1;
+
+    if (todo.length > 0) {
+      id = todo[0].id + 1;
+    }
+
+    const newTodo = {
+      text: text,
+      id: id,
+      key: id,
+    };
+    setTodo([newTodo, ...todo]);
+  }
+  console.log(todo);
+
+  const handleDelete = (id) => {
+    const newTodos = todo.filter((el) => el.id !== id);
+
+    setTodo(newTodos, ...todo);
+  };
+
+  const handleComplete = (id) => {
+    const updatedTodos = todo.map((el) => {
+      if (el.id == id) {
+        el.complete = !el.complete;
+      }
+      return el;
+    });
+    setTodo(updatedTodos);
+  };
+
+  const elements = todo.map((el) => (
+    <TodoItem
+      text={el.text}
+      id={el.id}
+      key={el.key}
+      todo={el}
+      handleDelete={handleDelete}
+      handleComplete={handleComplete}
+      complete={el.complete}
+    />
+  ));
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="form">
+        <h1 className="title">Todo List</h1>
+        <ToDoForm addTodo={addTodo} />
+        {elements}
+      </div>
     </div>
   );
-}
+};
 
 export default App;
